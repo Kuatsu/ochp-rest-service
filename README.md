@@ -8,6 +8,7 @@ It was built to be used as a microservice for another backend, like Node.js, to 
 Please note that this wrapper does not provide any security or caching features whatsoever: It immediately passes any request to the SOAP protocol without any further checks. Those should therefore be implemented in the parent service and under no circumstances should this REST service be exposed to the outside.
 
 ## Usage
+Either run through the provided Dockerfile (making sure to pass in the needed environment variables from `.env.example` to Docker) or run manually:
 1. Run `bundle install` to install the needed gems.
 2. Then, either copy `.env.example` to an `.env` file and fill the needed values, or set those environment variables directly within your system / CI pipeline.
 3. Lastly, simply run `ruby src/main.rb` to start the Sinatra / Puma server.

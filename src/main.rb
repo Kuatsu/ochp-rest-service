@@ -32,6 +32,7 @@ live_ochp_client = Savon.client do |config|
   config.endpoint(ENV['OCHP_LIVE_ENDPOINT'])
 end
 
+set :bind, '0.0.0.0'
 set :port, ENV['PORT']
 
 get '/charge-point-list' do
