@@ -7,17 +7,20 @@ class Object; def ensure_array; [self] end end
 class Array; def ensure_array; to_a end end
 class NilClass; def ensure_array; to_a end end
 
-static_ochp_client = Savon.client do |config|
+def global_savon_config(config)
   wsdl_content = File.read("./ochp-1.4/ochp.wsdl")
   config.wsdl(wsdl_content)
   config.wsse_auth(ENV['OCHP_USERNAME'], ENV['OCHP_PASSWORD'])
+  return config
+end
+
+static_ochp_client = Savon.client do |config|
+  global_savon_config(config)
   config.endpoint(ENV['OCHP_SERVICE_ENDPOINT'])
 end
 
 live_ochp_client = Savon.client do |config|
-  wsdl_content = File.read("./ochp-1.4/ochp.wsdl")
-  config.wsdl(wsdl_content)
-  config.wsse_auth(ENV['OCHP_USERNAME'], ENV['OCHP_PASSWORD'])
+  global_savon_config(config)
   config.endpoint(ENV['OCHP_LIVE_ENDPOINT'])
 end
 
