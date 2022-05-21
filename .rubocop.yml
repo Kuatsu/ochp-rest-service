@@ -2,9 +2,14 @@ AllCops:
   NewCops: disable
 Metrics/BlockLength:
   Exclude:
+    - src/parser.rb
     - src/main.rb
+Metrics/MethodLength:
+  Exclude:
+    - src/parser.rb
+Metrics/ModuleLength:
+  Exclude:
+    - src/parser.rb
 Style/FrozenStringLiteralComment:
   Exclude:
     - Gemfile
-Metrics/ModuleLength:
-  Enabled: false

@@ -37,54 +37,17 @@ set :port, ENV['PORT']
 get '/charge-point-list' do
   response = static_ochp_client.call(:get_charge_point_list)
   content_type 'application/json'
-  json(
-    response.body[:get_charge_point_list_response][:charge_point_info_array].ensure_array.map do |charge_point|
-      {
-        evseId: charge_point[:evse_id],
-        locationId: charge_point[:location_id],
-        timestamp: charge_point.dig(:timestamp, :date_time),
-        locationName: charge_point[:location_name],
-        locationNameLang: charge_point[:location_name_lang],
-        images: Parser.one_or_multiple(charge_point[:images], Parser.method(:evse_image_url)),
-        relatedResources: Parser.one_or_multiple(charge_point[:related_resources], Parser.method(:related_resource)),
-        address: Parser.address(charge_point[:charge_point_address]),
-        location: Parser.geo_point(charge_point[:location]),
-        locationType: charge_point.dig(:location, :general_location_type),
-        relatedLocations: Parser.one_or_multiple(charge_point[:related_location], Parser.method(:additional_geo_point)),
-        timezone: charge_point[:time_zone],
-        openingTimes: Parser.hours(charge_point[:opening_times]),
-        status: if charge_point.dig(:status, :charge_point_status_type)
-                  charge_point[:status][:charge_point_status_type].downcase
-                end,
-        statusSchedule: Parser.one_or_multiple(charge_point[:status_schedule], Parser.method(:charge_point_schedule)),
-        telephoneNumber: charge_point[:telephone_number],
-        parkingSpots: Parser.one_or_multiple(charge_point[:parking_spot], Parser.method(:parking_spot_info)),
-        restrictions: Parser.one_or_multiple(charge_point[:restriction], Parser.method(:restriction)),
-        authMethods: Parser.one_or_multiple(charge_point[:auth_method], Parser.method(:auth_method)),
-        connectors: Parser.one_or_multiple(charge_point[:connectors], Parser.method(:connector)),
-        chargePointType: charge_point[:charge_point_type],
-        ratings: Parser.ratings(charge_point[:ratings]),
-        userInterfaceLang: Parser.one_or_multiple(
-          charge_point[:user_interface_lang],
-          Parser.method(:user_interface_lang)
-        ),
-        maxReservation: charge_point.key(:max_reservation) ? charge_point[:max_reservation].to_f : nil
-      }
-    end
+  json Parser.one_or_multiple(
+    response.body[:get_charge_point_list_response][:charge_point_info_array],
+    Parser.method(:charge_point_info)
   )
 end
 
 get '/live/status' do
   response = live_ochp_client.call(:get_status)
   content_type 'application/json'
-  json(
-    response.body[:get_status_response][:evse].ensure_array.map do |status|
-      {
-        evseId: status[:evse_id],
-        major: status[:@major],
-        minor: status[:@minor],
-        ttl: status[:@ttl]
-      }
-    end
+  json Parser.one_or_multiple(
+    response.body[:get_status_response][:evse],
+    Parser.method(:live_status)
   )
 end

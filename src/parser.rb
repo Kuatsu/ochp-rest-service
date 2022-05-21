@@ -127,4 +127,56 @@ module Parser
       parkingSpotNumber: parking_spot_info[:parking_spot_number]
     }
   end
+
+  # Top-level parsers
+  # rubocop:disable Metrics/AbcSize
+  def self.charge_point_info(charge_point_info)
+    {
+      evseId: charge_point_info[:evse_id],
+      locationId: charge_point_info[:location_id],
+      timestamp: charge_point_info.dig(:timestamp, :date_time),
+      locationName: charge_point_info[:location_name],
+      locationNameLang: charge_point_info[:location_name_lang],
+      images: one_or_multiple(charge_point_info[:images], method(:evse_image_url)),
+      relatedResources: one_or_multiple(charge_point_info[:related_resources], method(:related_resource)),
+      address: address(charge_point_info[:charge_point_address]),
+      location: geo_point(charge_point_info[:location]),
+      locationType: charge_point_info.dig(:location, :general_location_type),
+      relatedLocations: one_or_multiple(
+        charge_point_info[:related_location],
+        method(:additional_geo_point)
+      ),
+      timezone: charge_point_info[:time_zone],
+      openingTimes: hours(charge_point_info[:opening_times]),
+      status: if charge_point_info.dig(:status, :charge_point_status_type)
+                charge_point_info[:status][:charge_point_status_type].downcase
+              end,
+      statusSchedule: one_or_multiple(
+        charge_point_info[:status_schedule],
+        method(:charge_point_schedule)
+      ),
+      telephoneNumber: charge_point_info[:telephone_number],
+      parkingSpots: one_or_multiple(charge_point_info[:parking_spot], method(:parking_spot_info)),
+      restrictions: one_or_multiple(charge_point_info[:restriction], method(:restriction)),
+      authMethods: one_or_multiple(charge_point_info[:auth_method], method(:auth_method)),
+      connectors: one_or_multiple(charge_point_info[:connectors], method(:connector)),
+      chargePointType: charge_point_info[:charge_point_type],
+      ratings: ratings(charge_point_info[:ratings]),
+      userInterfaceLang: one_or_multiple(
+        charge_point_info[:user_interface_lang],
+        method(:user_interface_lang)
+      ),
+      maxReservation: charge_point_info.key(:max_reservation) ? charge_point_info[:max_reservation].to_f : nil
+    }
+  end
+
+  def self.live_status(live_status)
+    {
+      evseId: live_status[:evse_id],
+      major: live_status[:@major],
+      minor: live_status[:@minor],
+      ttl: live_status[:@ttl]
+    }
+  end
+  # rubocop:enable Metrics/AbcSize
 end
