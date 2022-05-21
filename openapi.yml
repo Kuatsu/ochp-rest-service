@@ -265,14 +265,6 @@ components:
         - $ref: "#/components/schemas/GeoPointType"
         - type: object
           properties:
-            latitude:
-              type: string
-              maxLength: 10
-              example: "50.770774"
-            longitude:
-              type: string
-              maxLength: 11
-              example: "-126.104965"
             name:
               type: string
               maxLength: 255

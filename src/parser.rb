@@ -140,7 +140,7 @@ module Parser
       images: one_or_multiple(charge_point_info[:images], method(:evse_image_url)),
       relatedResources: one_or_multiple(charge_point_info[:related_resources], method(:related_resource)),
       address: address(charge_point_info[:charge_point_address]),
-      location: geo_point(charge_point_info[:location]),
+      location: geo_point(charge_point_info[:charge_point_location]),
       locationType: charge_point_info.dig(:location, :general_location_type),
       relatedLocations: one_or_multiple(
         charge_point_info[:related_location],
