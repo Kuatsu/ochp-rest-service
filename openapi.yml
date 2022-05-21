@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  version: '1.4-1'
+  version: '1.4-2'
   title: 'OCHP 1.4 JSON REST Wrapper'
   license:
     identifier: MIT
