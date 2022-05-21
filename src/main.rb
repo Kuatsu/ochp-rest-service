@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-require 'dotenv/load'
+require 'dotenv'
 require 'sinatra'
 require 'sinatra/json'
 require 'savon'
 require_relative './parser'
+
+Dotenv.load("#{__dir__}/../.env")
 
 # rubocop:disable Style/SingleLineMethods,Style/Documentation
 # Extend Object / Array / NilClass by "ensure_array" which turns the object into an array if it is not already one
@@ -14,7 +16,7 @@ class NilClass; def ensure_array; to_a end end
 # rubocop:enable Style/SingleLineMethods,Style/Documentation
 
 def global_savon_config(config)
-  wsdl_content = File.read('./ochp-1.4/ochp.wsdl')
+  wsdl_content = File.read("#{__dir__}/../ochp-1.4/ochp.wsdl")
   config.wsdl(wsdl_content)
   config.wsse_auth(ENV['OCHP_USERNAME'], ENV['OCHP_PASSWORD'])
   config
