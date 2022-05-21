@@ -2,6 +2,9 @@ openapi: 3.1.0
 info:
   version: '1.4-1'
   title: 'OCHP 1.4 JSON REST Wrapper'
+  license:
+    identifier: MIT
+    name: MIT
 paths:
   /charge-point-list:
     get:
