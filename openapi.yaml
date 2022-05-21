@@ -1,0 +1,542 @@
+openapi: 3.1.0
+info:
+  version: '1.4-1'
+  title: 'OCHP 1.4 JSON REST Wrapper'
+paths:
+  /charge-point-list:
+    get:
+      summary: 'Get a list of available charge points. [GetChargePointList]'
+      operationId: GetChargePointList
+      tags:
+        - service
+      responses:
+        '200':
+          description: List of available charge points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChargePointInfoType'
+        default:
+          description: Error
+  /live/status:
+    get:
+      summary: 'Gets the live status of the charge points, where available. [GetStatus]'
+      operationId: GetStatus
+      tags:
+        - live
+      responses:
+        '200':
+          description: Live status of the charging points, where available
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvseStatusType'
+        default:
+          description: Error
+components:
+  schemas:
+    ImageClassEnum:
+      type: string
+      enum:
+        - networkLogo
+        - operatorLogo
+        - ownerLogo
+        - stationPhoto
+        - locationPhoto
+        - entrancePhoto
+        - otherPhoto
+        - otherLogo
+        - otherGraphic
+      example: operatorLogo
+    RelatedResourceClassEnum:
+      type: string
+      enum:
+        - operatorMap
+        - operatorPayment
+        - stationInfo
+        - surroundingInfo
+        - ownerHomepage
+        - feedbackForm
+        - openingTimes
+    GeoClassEnum:
+      type: string
+      enum:
+        - entrance
+        - exit
+        - access
+        - ui
+        - other
+    ChargePointStatusEnum:
+      type: string
+      enum:
+        - unknown
+        - operative
+        - inoperative
+        - planned
+        - closed
+      example: operative
+    GeneralLocationEnum:
+      type: string
+      enum:
+        - on-street
+        - parking-garage
+        - underground-garage
+        - parking-lot
+        - private
+        - other
+        - unknown
+      example: parking-garage
+    RestrictionEnum:
+      type: string
+      enum:
+        - evonly
+        - plugged
+        - disabled
+        - customers
+        - motorcycles
+        - carsharing
+      example: plugged
+    AuthMethodEnum:
+      type: string
+      enum:
+        - Public
+        - LocalKey
+        - DirectCash
+        - DirectCreditcard
+        - DirectDebitcard
+        - RfidMifareCls
+        - RfidMifareDes
+        - RfidCalypso
+        - Iec
+        - OchpDirectAuth
+        - OperatorAuth
+      example: LocalKey
+    ConnectorStandardEnum:
+      type: string
+      enum:
+        - Chademo
+        - IEC_62196_T1
+        - IEC_62196_T1_COMBO
+        - IEC_62196_T2
+        - IEC_62196_T2_COMBO
+        - IEC_62196_T3A
+        - IEC_62196_T3C
+        - DOMESTIC_A
+        - DOMESTIC_B
+        - DOMESTIC_C
+        - DOMESTIC_D
+        - DOMESTIC_E
+        - DOMESTIC_F
+        - DOMESTIC_G
+        - DOMESTIC_H
+        - DOMESTIC_I
+        - DOMESTIC_J
+        - DOMESTIC_K
+        - DOMESTIC_L
+        - TESLA_R
+        - TESLA_S
+        - IEC_60309_2_single_16
+        - IEC_60309_2_three_16
+        - IEC_60309_2_three_32
+        - IEC_60309_2_three_64
+      example: IEC_62196_T2_COMBO
+    ConnectorFormatEnum:
+      type: string
+      enum: ['socket', 'cable']
+    MajorEnum:
+      type: string
+      enum:
+        - available
+        - not-available
+        - unknown
+      example: not-available
+    MinorEnum:
+      type: string
+      enum:
+        - available
+        - reserved
+        - charging
+        - blocked
+        - outoforder
+      example: charging
+    DateTimeType:
+      type: string
+      example: '2011-06-01T11:45:30Z'
+      description: 'Provided in ISO8601'
+    EvseImageUrlType:
+      type: object
+      properties:
+        uri:
+          type: string
+          example: http://google.com/someimage.png
+          maxLength: 255
+        thumbUri:
+          type: string
+          example: http://google.com/someimage.png?thumb
+          maxLength: 255
+          nullable: true
+        class:
+          $ref: '#/components/schemas/ImageClassEnum'
+        type:
+          type: string
+          example: png
+          maxLength: 4
+          description: File type of the image
+        width:
+          type: integer
+          example: 800
+          nullable: true
+        height:
+          type: integer
+          example: 600
+          nullable: true
+      required:
+        - uri
+        - thumbUri
+        - class
+        - type
+        - width
+        - height
+    RelatedResourceType:
+      type: object
+      properties:
+        uri:
+          type: string
+          example: http://google.com
+          maxLength: 255
+        class:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedResourceClassEnum'
+    AddressType:
+      type: object
+      properties:
+        houseNumber:
+          type: string
+          maxLength: 6
+          nullable: true
+          example: "123B"
+        street:
+          type: string
+          maxLength: 45
+          example: "Test Street"
+        city:
+          type: string
+          maxLength: 45
+          example: "Test City"
+        zipCode:
+          type: string
+          maxLength: 10
+          example: "12345"
+        country:
+          type: string
+          maxLength: 3
+          example: "DEU"
+          description: Provided in ISO3166.
+      required:
+        - houseNumber
+        - street
+        - city
+        - zipCode
+        - country
+    GeoPointType:
+      type: object
+      properties:
+        latitude:
+          type: string
+          maxLength: 10
+          example: "50.770774"
+        longitude:
+          type: string
+          maxLength: 11
+          example: "-126.104965"
+      required:
+        - latitude
+        - longitude
+    AdditionalGeoPointType:
+      allOf:
+        - $ref: "#/components/schemas/GeoPointType"
+        - type: object
+          properties:
+            latitude:
+              type: string
+              maxLength: 10
+              example: "50.770774"
+            longitude:
+              type: string
+              maxLength: 11
+              example: "-126.104965"
+            name:
+              type: string
+              maxLength: 255
+              nullable: true
+            type:
+              $ref: "#/components/schemas/GeoClassEnum"
+    ExceptionalPeriodType:
+      type: object
+      properties:
+        periodBegin:
+          $ref: '#/components/schemas/DateTimeType'
+        periodEnd:
+          $ref: '#/components/schemas/DateTimeType'
+      required:
+        - periodBegin
+        - periodEnd
+    RegularHoursType:
+      type: object
+      properties:
+        weekday:
+          type: integer
+          minimum: 1
+          maximum: 7
+          example: 5
+          description: From 0 (Monday) to 7 (Sunday).
+        periodBegin:
+          type: string
+          maxLength: 5
+          example: '14:00'
+        periodEnd:
+          type: string
+          maxLength: 5
+          example: '18:00'
+    HoursType:
+      type: object
+      properties:
+        regularHours:
+          type: array
+          description: Can be empty in which case the property "twentyfourseven" should be true.
+          items:
+            $ref: "#/components/schemas/RegularHoursType"
+        twentyfourseven:
+          type: boolean
+          description: If this is false, the property "regularHours" should contain more information.
+          example: false
+        closedCharging:
+          type: boolean
+          example: false
+          description: Whether or not a vehicle can be plugged in and charged while the location itself is closed.
+        exceptionalOpenings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExceptionalPeriodType"
+        exceptionalClosings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExceptionalPeriodType"
+      required:
+        - regularHours
+        - twentyfourseven
+    ChargePointScheduleType:
+      type: object
+      properties:
+        startDate:
+          $ref: '#/components/schemas/DateTimeType'
+        endDate:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/DateTimeType'
+        status:
+          $ref: '#/components/schemas/ChargePointStatusEnum'
+    ParkingSpotInfoType:
+      type: object
+      properties:
+        parkingId:
+          type: string
+          example: DPLNDP001234
+        restrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestrictionEnum'
+        floorLevel:
+          type: string
+          maxLength: 4
+          example: P-5
+          nullable: true
+        parkingSpotNumber:
+          type: string
+          maxLength: 5
+          example: P-512
+          nullable: true
+      required:
+        - parkingId
+        - restrictions
+        - floorLevel
+        - parkingSpotNumber
+    ConnectorType:
+      type: object
+      properties:
+        connectorStandard:
+          $ref: '#/components/schemas/ConnectorStandardEnum'
+        connectorFormat:
+          $ref: '#/components/schemas/ConnectorFormatEnum'
+        tariffId:
+          type: string
+          nullable: true
+          example: YYABCT01
+    RatingsType:
+      type: object
+      properties:
+        maximumPower:
+          type: number
+          example: 20
+        guaranteedPower:
+          type: number
+          example: 11
+          nullable: true
+        nominalVoltage:
+          type: number
+          example: 230
+          nullable: true
+      required:
+        - maximumPower
+        - guaranteedPower
+        - nominalVoltage
+    ChargePointInfoType:
+      type: object
+      properties:
+        evseId:
+          type: string
+          example: DELNDE001234567
+        locationId:
+          type: string
+          example: DELNDS001234567
+        timestamp:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/DateTimeType'
+        locationName:
+          type: string
+          example: "OCHP Test Charge Point"
+          description: Unique name for this location.
+          maxLength: 100
+        locationNameLang:
+          type: string
+          example: "DEU"
+          description: Locale of "locationName". Provided in ISO3166.
+          maxLength: 3
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvseImageUrlType'
+        relatedResources:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedResourceType'
+        address:
+          $ref: '#/components/schemas/AddressType'
+        location:
+          $ref: '#/components/schemas/GeoPointType'
+        relatedLocation:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalGeoPointType'
+        timezone:
+          type: string
+          maxLength: 255
+          nullable: true
+          example: "Europe/Berlin"
+          description: "IANA Timezone"
+        openingTimes:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/HoursType'
+        status:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/ChargePointStatusEnum'
+        statusSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargePointScheduleType'
+        telephoneNumber:
+          type: string
+          maxLength: 20
+          nullable: true
+          description: 'Free format, but recommended to be in international format with leading + and country code.'
+          example: '+496912345678'
+        locationType:
+          $ref: '#/components/schemas/GeneralLocationEnum'
+        parkingSpots:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkingSpotInfoType'
+        restrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestrictionEnum'
+        authMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthMethodEnum'
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorType'
+        chargePointType:
+          type: string
+          enum: ['AC', 'DC']
+        ratings:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/RatingsType'
+        userInterfaceLang:
+          type: array
+          items:
+            type: string
+            maxLength: 3
+            example: "DEU"
+            description: "Language of the user interface. Provided in ISO3166."
+        maxReservation:
+          type: number
+          example: 30
+          nullable: true
+          description: "If this charge point can be reserved, this is the maximum time it can be reserved."
+      required:
+        - evseId
+        - locationId
+        - timestamp
+        - locationName
+        - images
+        - relatedResources
+        - address
+        - location
+        - relatedLocation
+        - timezone
+        - openingTimes
+        - status
+        - statusSchedule
+        - telephoneNumber
+        - locationType
+        - parkingSpots
+        - restrictions
+        - authMethods
+        - connectors
+        - chargePointType
+        - ratings
+        - userInterfaceLang
+        - maxReservation
+    EvseStatusType:
+      type: object
+      properties:
+        evseId:
+          type: string
+          example: DELNDE001234567
+        major:
+          $ref: '#/components/schemas/MajorEnum'
+        minor:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/MinorEnum'
+        ttl:
+          anyOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/DateTimeType'
+      required:
+        - evseId
+        - major
+        - minor
+        - ttl
