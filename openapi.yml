@@ -433,7 +433,7 @@ components:
           $ref: '#/components/schemas/AddressType'
         location:
           $ref: '#/components/schemas/GeoPointType'
-        relatedLocation:
+        relatedLocations:
           type: array
           items:
             $ref: '#/components/schemas/AdditionalGeoPointType'
@@ -507,7 +507,7 @@ components:
         - relatedResources
         - address
         - location
-        - relatedLocation
+        - relatedLocations
         - timezone
         - openingTimes
         - status

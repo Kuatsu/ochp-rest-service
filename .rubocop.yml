@@ -1,0 +1,10 @@
+AllCops:
+  NewCops: disable
+Metrics/BlockLength:
+  Exclude:
+    - src/main.rb
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - Gemfile
+Metrics/ModuleLength:
+  Enabled: false
