@@ -93,7 +93,7 @@ post '/endpoints' do
                                 url: ENV['OCHP_SOAP_MOCK_SERVER'],
                                 namespaceUrl: 'http://ochp.eu/1.3',
                                 accessToken: body['accessToken'],
-                                validUntil: { DateTime: body['validUntil'].nil? ? d : body['validUntil'] } },
+                                validUntil: { DateTime: body['validUntil'].nil? ? d : body['validUntil'] },
                                 whitelist: ["#{ENV['OCHP_EMP_ID']}C%"]
                               }] })
   halt 204
