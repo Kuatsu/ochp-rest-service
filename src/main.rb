@@ -88,11 +88,12 @@ end
 post '/endpoints' do
   body = JSON.parse(request.body.read)
   d = DateTime.now.new_offset(0) + 1 # tomorrow UTC
+  d = d.strftime('%Y-%m-%dT%H:%M:%SZ')
   direct_chs_ochp_client.call(:add_service_endpoints, message: { providerEndpointArray: [{
                                 url: ENV['OCHP_SOAP_MOCK_SERVER'],
                                 namespaceUrl: 'http://ochp.eu/1.3',
                                 accessToken: body['accessToken'],
-                                validUntil: { DateTime: d.strftime('%Y-%m-%dT%H:%M:%SZ') },
+                                validUntil: { DateTime: body['validUntil'].nil? ? d : body['validUntil'] } },
                                 whitelist: ["#{ENV['OCHP_EMP_ID']}C%"]
                               }] })
   halt 204
