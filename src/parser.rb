@@ -178,5 +178,23 @@ module Parser
       ttl: live_status[:@ttl]
     }
   end
+
+  def self.operator_endpoint(operator_endpoint)
+    {
+      url: operator_endpoint[:url],
+      namespaceUrl: operator_endpoint[:namespace_url],
+      accessToken: operator_endpoint[:access_token],
+      validUntil: operator_endpoint[:valid_until][:date_time],
+      whitelist: operator_endpoint[:whitelist].ensure_array,
+      blacklist: operator_endpoint[:blacklist].nil? ? [] : operator_endpoint[:blacklist].ensure_array
+    }
+  end
+
+  def self.evse_selection(evse_selection)
+    {
+      directId: evse_selection[:direct_id],
+      ttl: evse_selection[:ttl][:date_time]
+    }
+  end
   # rubocop:enable Metrics/AbcSize
 end
